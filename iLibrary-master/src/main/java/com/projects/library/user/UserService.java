@@ -5,6 +5,7 @@ import com.projects.library.exception.UserAlreadyExistsException;
 import com.projects.library.exception.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +17,16 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public User add(User user) {
         Optional<User> theUser = userRepository.findByEmail(user.getEmail());
         if (theUser.isPresent()){
             throw new UserAlreadyExistsException("A user with " +user.getEmail() +" already exists");
         }
+        //before saving the user to the Database, we need to encode the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
