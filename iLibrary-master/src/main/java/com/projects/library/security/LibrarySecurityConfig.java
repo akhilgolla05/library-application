@@ -15,10 +15,9 @@ public class LibrarySecurityConfig {
     //secure all the URLS except the Unscured URls
     private static final String[] SECURED_URLs = {"/books/**"};
     private static final String[] UN_SECURED_URLs = {"/books/all",
-            "/books/book/{id}",
-            "/users/**"};
+            "/books/book/{id}", "/users/**" };
 
-
+//"
 
 //    1. encoding the password
 
@@ -26,6 +25,18 @@ public class LibrarySecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//        return new LibraryUserDetailsService();
+//    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+//        authenticationProvider.setUserDetailsService(userDetailsService());
+//        authenticationProvider.setPasswordEncoder(passwordEncoder());
+//        return authenticationProvider;
+//    }
 
     //4.
     @Bean
@@ -43,7 +54,7 @@ public class LibrarySecurityConfig {
                 .requestMatchers(SECURED_URLs)
                 .hasAuthority("ADMIN")
                 .anyRequest().authenticated()
-                .and().formLogin().and().build();
+                .and().httpBasic().and().build();
 
     }
 

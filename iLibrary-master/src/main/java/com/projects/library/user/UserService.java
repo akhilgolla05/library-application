@@ -5,6 +5,7 @@ import com.projects.library.exception.UserAlreadyExistsException;
 import com.projects.library.exception.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -55,7 +57,7 @@ public class UserService implements IUserService {
 
     @Override
     public User update(User user) {
-        user.setRole(user.getRole());
+        user.setRoles(user.getRoles());
         return userRepository.save(user);
     }
 }
