@@ -15,9 +15,9 @@ public class LibrarySecurityConfig {
     //secure all the URLS except the Unscured URls
     private static final String[] SECURED_URLs = {"/books/**"};
     private static final String[] UN_SECURED_URLs = {"/books/all",
-            "/books/book/{id}", "/users/**" };
+            "/books/book/{id}", "/users/**", "/authenticate/**" };
 
-//"
+
 
 //    1. encoding the password
 
