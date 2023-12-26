@@ -9,12 +9,16 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+
+import io.jsonwebtoken.Claims;
 
 /*
 3.
@@ -68,10 +72,6 @@ public class JwtService {
        JWT claims can be divided into two categories:
        registered claims and custom claims.
 
-
-
-
-
      */
 
     private String generateTokenForUser(Map<String, Object> claims, String userName) {
@@ -92,4 +92,41 @@ public class JwtService {
 
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+
+
+    public String extractUsernameFromToken(String theToken){
+//        here claims - payload, from payload we are extracting
+//        subject(username) from token
+        return extractClaim(theToken, Claims::getSubject);
+    }
+    //extracting expiration time
+    public Date extractExpirationTimeFromToken(String theToken) {
+        return extractClaim(theToken, Claims :: getExpiration);
+    }
+
+    public Boolean validateToken(String theToken, UserDetails userDetails){
+        final String userName = extractUsernameFromToken(theToken);
+        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(theToken));
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                //this is the digital key to verify the signature
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+    }
+    private boolean isTokenExpired(String theToken) {
+        return extractExpirationTimeFromToken(theToken).before(new Date());
+    }
+
+
 }
