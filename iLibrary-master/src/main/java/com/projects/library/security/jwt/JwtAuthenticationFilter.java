@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
           //validating token against the userdetails
             //credentials will be null, unknown user is trying
-            var authToken = new UsernamePasswordAuthenticationToken(token, null,userDetails.getAuthorities());
+            var authToken = new UsernamePasswordAuthenticationToken(userDetails, null,userDetails.getAuthorities());
 
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             //setting the authenticated token for the user
